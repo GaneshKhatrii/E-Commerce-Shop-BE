@@ -11,8 +11,13 @@ namespace ECommerce.Infrastructure.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
+
+        // Product related DbSets
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

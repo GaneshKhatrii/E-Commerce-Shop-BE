@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using ECommerce.Application.Interfaces.Products;
+using ECommerce.Infrastructure.Repositories.Products;
+using ECommerce.Infrastructure.Services.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +82,18 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Register IProductRepository
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// Register IProductService
+builder.Services.AddScoped<IProductService, ProductService>();
+
+// Register IProductVariantRepository
+builder.Services.AddScoped<IproductVariantRepository, ProductVariantRepository>();
+
+// Register IproductVariantService
+builder.Services.AddScoped<IproductVariantService, ProductVariantService>();
+
 // Configure Authentication
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -98,6 +113,14 @@ builder.Services
     });
 
 var app = builder.Build();
+
+// Seed Admin
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await AdminSeeder.SeedAdminAsync(context);
+}
+
 
 // Configure the HTTP request pipeline. 
 if (app.Environment.IsDevelopment())
