@@ -13,6 +13,8 @@ using Microsoft.OpenApi.Models;
 using ECommerce.Application.Interfaces.Products;
 using ECommerce.Infrastructure.Repositories.Products;
 using ECommerce.Infrastructure.Services.Products;
+using ECommerce.Application.Interfaces.Storage;
+using ECommerce.Infrastructure.Services.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +95,9 @@ builder.Services.AddScoped<IproductVariantRepository, ProductVariantRepository>(
 
 // Register IproductVariantService
 builder.Services.AddScoped<IproductVariantService, ProductVariantService>();
+
+// Register IFileStorageService
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 // Configure Authentication
 builder.Services
