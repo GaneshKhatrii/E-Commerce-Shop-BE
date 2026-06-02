@@ -17,23 +17,18 @@ namespace ECommerce.Infrastructure.Repositories.Products
             await _context.ProductVariants.AddAsync(productVariant);
         }
 
-        public async Task<(List<ProductVariant> variants, int totalRecords)> GetProductVariantsAsync(int pageNumber, int pageSize)
+        public async Task<List<ProductVariant>> GetProductVariantsAsync()
         {
-            var query = _context.ProductVariants.Include(x => x.Product).AsNoTracking();
-            var totalRecords = await query.CountAsync();
-
-            var variants = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            return await _context.ProductVariants
+                .Include(p => p.Product)
+                .AsNoTracking()
                 .ToListAsync();
-
-            return (variants, totalRecords);
         }
 
         public async Task<List<ProductVariant>> GetVariantsByProductIdAsync(Guid productId)
         {
             return await _context.ProductVariants
-                .Include(pv => pv.Product)
+                .Include(p => p.Product)
                 .Where(x => x.ProductId == productId)
                 .AsNoTracking()
                 .ToListAsync();

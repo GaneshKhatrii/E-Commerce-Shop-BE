@@ -13,7 +13,11 @@ namespace ECommerce.Infrastructure.Services.Storage
                 Directory.CreateDirectory(rootPath);
             }
 
-            var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+            var sanitizedFileName = Path.GetFileNameWithoutExtension(fileName).Replace(" ", "_");
+
+            var extension = Path.GetExtension(fileName);
+
+            var uniqueFileName = $"{Guid.NewGuid()}_{sanitizedFileName}{extension}";
 
             var filePath = Path.Combine(rootPath, uniqueFileName);
 

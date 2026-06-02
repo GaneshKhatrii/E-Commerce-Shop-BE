@@ -24,9 +24,6 @@ namespace ECommerce.Infrastructure.Configurations.Products
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
 
-            builder.Property(x => x.StockQuantity)
-                .IsRequired();
-
             // Relationship with Product
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.ProductVariants)

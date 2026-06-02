@@ -24,9 +24,9 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpGet("get-product-variants")]
-        public async Task<IActionResult> GetProductVariantsAsync([FromQuery] int pageNumber = 1 , [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetProductVariantsAsync()
         {
-            var result = await _productVariantService.GetProductVariantsAsync(pageNumber, pageSize);
+            var result = await _productVariantService.GetProductVariantsAsync();
             return StatusCode(result.StatusCode, result);
         }
 

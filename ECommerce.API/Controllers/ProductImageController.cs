@@ -26,14 +26,6 @@ namespace ECommerce.API.Controllers
         [HttpPost("upload-image")]
         public async Task<IActionResult> UploadImage([FromForm] UploadProductImageRequest request)
         {
-            if (request.Image == null || request.Image.Length == 0)
-            {
-                return BadRequest(new
-                {
-                    Message = "Image is required"
-                });
-            }
-
             var imageUrl = await _fileStorageService.SaveFileAsync(request.Image.OpenReadStream(), request.Image.FileName, "uploads/products");
 
             var productImageRequest = new AddProductImageRequestDto

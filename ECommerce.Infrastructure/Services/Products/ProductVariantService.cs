@@ -33,7 +33,6 @@ namespace ECommerce.Infrastructure.Services.Products
                 Size = request.Size,
                 Color = request.Color,
                 Price = request.Price,
-                StockQuantity = request.StockQuantity,
             };
 
             await _productVariantRepository.AddProductVariantAsync(productVariant);
@@ -48,13 +47,9 @@ namespace ECommerce.Infrastructure.Services.Products
             };
         }
 
-        public async Task<ApiResponse<PagedResult<ProductVariantResponseDto>>> GetProductVariantsAsync(int pageNumber, int pageSize)
+        public async Task<ApiResponse<List<ProductVariantResponseDto>>> GetProductVariantsAsync()
         {
-            if (pageNumber < 1) pageNumber = 1;
-
-            if (pageSize < 1) pageSize = 5;
-
-            var (variants, totalRecords) = await _productVariantRepository.GetProductVariantsAsync(pageNumber, pageSize);
+            var variants = await _productVariantRepository.GetProductVariantsAsync();
 
             var variantsList = variants.Select(x => new ProductVariantResponseDto
             {
@@ -64,20 +59,14 @@ namespace ECommerce.Infrastructure.Services.Products
                 Size = x.Size,
                 Color = x.Color,
                 Price = x.Price,
-                StockQuantity = x.StockQuantity,
-
             }).ToList();
 
-            return new ApiResponse<PagedResult<ProductVariantResponseDto>>
+            return new ApiResponse<List<ProductVariantResponseDto>>
             {
                 Success = true,
                 StatusCode = 200,
                 Message = variantsList.Any() ? "Product variants retrieved successfully" : "No variants found",
-                Data = new PagedResult<ProductVariantResponseDto>
-                {
-                    Items = variantsList,
-                    TotalRecords = totalRecords,
-                }
+                Data = variantsList
             };
         }
 
@@ -92,8 +81,6 @@ namespace ECommerce.Infrastructure.Services.Products
                 Size = x.Size,
                 Color = x.Color,
                 Price = x.Price,
-                StockQuantity = x.StockQuantity,
-
             }).ToList();
 
             return new ApiResponse<List<ProductVariantResponseDto>>

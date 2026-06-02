@@ -5,7 +5,7 @@ namespace ECommerce.Application.Interfaces.Products
     public interface IproductVariantRepository
     {
         Task AddProductVariantAsync(ProductVariant productVariant);
-        Task<(List<ProductVariant> variants, int totalRecords)> GetProductVariantsAsync(int pageNumber, int pageSize);
+        Task<List<ProductVariant>> GetProductVariantsAsync();
         Task<List<ProductVariant>> GetVariantsByProductIdAsync(Guid productId);
         Task<Product?> GetProductByIdAsync(Guid productId);
         Task SaveChangesAsync();

@@ -1,20 +1,22 @@
 using ECommerce.API.Middlewares;
+using ECommerce.API.Validators.ProductImages;
 using ECommerce.Application.Interfaces;
+using ECommerce.Application.Interfaces.Products;
+using ECommerce.Application.Interfaces.Storage;
 using ECommerce.Application.Validators.Auth;
 using ECommerce.Infrastructure.Data;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.Products;
 using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Services.Products;
+using ECommerce.Infrastructure.Services.Storage;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using ECommerce.Application.Interfaces.Products;
-using ECommerce.Infrastructure.Repositories.Products;
-using ECommerce.Infrastructure.Services.Products;
-using ECommerce.Application.Interfaces.Storage;
-using ECommerce.Infrastructure.Services.Storage;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +24,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Register AddFluentValidationAutoValidation() to enable automatic validation of incoming requests using FluentValidation validators.
+// It automatically executes the appropriate validators for the incomming request models
+builder.Services.AddFluentValidationAutoValidation();
+
 // Register FluentValidators.
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UploadProductImageRequestValidator>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -61,7 +68,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 // Register ApplicationDbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -96,8 +102,20 @@ builder.Services.AddScoped<IproductVariantRepository, ProductVariantRepository>(
 // Register IproductVariantService
 builder.Services.AddScoped<IproductVariantService, ProductVariantService>();
 
+// Register IProductImageRepository
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+
+// Register IProductImageService
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
+
 // Register IFileStorageService
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
+// Register IInventoryRepository
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+
+// Register IInventoryService
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 
 // Configure Authentication
 builder.Services
@@ -126,7 +144,6 @@ using (var scope = app.Services.CreateScope())
     await AdminSeeder.SeedAdminAsync(context);
 }
 
-
 // Configure the HTTP request pipeline. 
 if (app.Environment.IsDevelopment())
 {
@@ -137,6 +154,9 @@ if (app.Environment.IsDevelopment())
 // Register ExceptionMiddleware
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+
+// ASP.NET Core needs UseStaticFiles() to expose: images, css, js static assets to browser.
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

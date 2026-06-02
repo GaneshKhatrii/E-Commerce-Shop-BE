@@ -31,7 +31,7 @@ namespace ECommerce.Infrastructure.Repositories.Products
         {
             return await _context.ProductVariants
                 .AsNoTracking()
-                .FirstOrDefaultAsync(pv => pv.Id == productVariantId);
+                .FirstOrDefaultAsync(variant => variant.Id == productVariantId);
         }
 
         public async Task SaveChangesAsync()
