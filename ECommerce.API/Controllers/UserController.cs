@@ -2,7 +2,6 @@
 using ECommerce.Application.Common;
 using ECommerce.Application.DTOs.User;
 using ECommerce.Application.Interfaces;
-using ECommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

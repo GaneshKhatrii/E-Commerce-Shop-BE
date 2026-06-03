@@ -1,13 +1,16 @@
 using ECommerce.API.Middlewares;
 using ECommerce.API.Validators.ProductImages;
 using ECommerce.Application.Interfaces;
+using ECommerce.Application.Interfaces.Orders;
 using ECommerce.Application.Interfaces.Products;
 using ECommerce.Application.Interfaces.Storage;
 using ECommerce.Application.Validators.Auth;
 using ECommerce.Infrastructure.Data;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.Orders;
 using ECommerce.Infrastructure.Repositories.Products;
 using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Services.Orders;
 using ECommerce.Infrastructure.Services.Products;
 using ECommerce.Infrastructure.Services.Storage;
 using FluentValidation;
@@ -116,6 +119,12 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 // Register IInventoryService
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+
+// Register ICartRepository
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+// Register ICartService
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Configure Authentication
 builder.Services
