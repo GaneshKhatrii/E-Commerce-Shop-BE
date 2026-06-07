@@ -13,6 +13,7 @@ namespace ECommerce.Application.Interfaces
         Task<User?> GetUserByIdAsync(Guid userId);
         Task<Address> AddAddressAsync(Address address);
         Task<List<Address>> GetUserAddressesAsync(Guid userId);
-        Task<Address?> GetAddressByIdAsync(Guid addressId);
+        Task<Address?> GetAddressByIdAsync(Guid userId, Guid addressId);
+        void DeleteAddressAsync(Address address);
     }
 }

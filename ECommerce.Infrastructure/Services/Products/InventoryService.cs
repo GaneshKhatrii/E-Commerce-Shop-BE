@@ -15,7 +15,7 @@ namespace ECommerce.Infrastructure.Services.Products
 
         public async Task<ApiResponse<string>> AddInventoryAsync(AddInventoryRequestDto request)
         {
-            // Check variant exists
+            // Check variant exists or not
             var productVariant = await _inventoryRepository.GetProductVariantByIdAsync(request.ProductVariantId);
 
             if (productVariant == null)
@@ -41,6 +41,7 @@ namespace ECommerce.Infrastructure.Services.Products
                 };
             }
 
+            // Finally create inventory when it doesn't exist
             var inventory = new Inventory
             {
                 ProductVariantId = request.ProductVariantId,
@@ -60,6 +61,7 @@ namespace ECommerce.Infrastructure.Services.Products
 
         public async Task<ApiResponse<String>> UpdateStockAsync(Guid productVariantId, UpdateInventoryStockRequestDto request)
         {
+            // Check inventory exists or not
             var inventory = await _inventoryRepository.GetInventoryByVariantIdAsync(productVariantId);
 
             if (inventory == null)
@@ -72,6 +74,7 @@ namespace ECommerce.Infrastructure.Services.Products
                 };
             }
 
+            // Update "AvailableStock" value and call save method if inventory exists
             inventory.AvailableStock = request.AvailableStock;
             await _inventoryRepository.SaveChangesAsync();
 
@@ -85,6 +88,7 @@ namespace ECommerce.Infrastructure.Services.Products
 
         public async Task<ApiResponse<InventoryResponseDto?>> GetInventoryByVariantIdAsync(Guid productVariantId)
         {
+            // Check inventory exists or not
             var inventory = await _inventoryRepository.GetInventoryByVariantIdAsync(productVariantId);
 
             if (inventory == null)
@@ -159,6 +163,7 @@ namespace ECommerce.Infrastructure.Services.Products
             };
         }
 
+        // Check product is out of stock or not
         private bool IsOutOfStock(Inventory inventory)
         {
             return inventory.AvailableStock <= 0;

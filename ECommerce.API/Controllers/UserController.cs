@@ -4,6 +4,7 @@ using ECommerce.Application.DTOs.User;
 using ECommerce.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerce.API.Controllers
 {
@@ -77,6 +78,19 @@ namespace ECommerce.API.Controllers
             });
         }
 
+        [HttpPut("addresses/{addressId}")]
+        public async Task<IActionResult> UpdateAddress(Guid addressId, [FromBody] UpdateAddressRequestDto request)
+        {
+            var result = await _userService.UpdateAddressAsync(userId, addressId, request);
+            return Ok(new ApiResponse<string>()
+            {
+                Success = true,
+                StatusCode = 200,
+                Message = result,
+                Data = null
+            });
+        }
+
         [HttpGet("addresses")]
         public async Task<IActionResult> GetAddresses()
         {
@@ -102,6 +116,18 @@ namespace ECommerce.API.Controllers
                 StatusCode = 200,
                 Message = result,
                 Data = null
+            });
+        }
+
+        [HttpDelete("addresses/{addressId}")]
+        public async Task<IActionResult> DeleteAddress(Guid addressId)
+        {
+            var result = await _userService.DeleteAddressAsync(userId, addressId);
+            return Ok(new ApiResponse<string>()
+            {
+                Success = true,
+                StatusCode = 200,
+                Message = result,
             });
         }
     }

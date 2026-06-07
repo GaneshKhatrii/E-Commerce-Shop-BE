@@ -83,6 +83,17 @@ namespace ECommerce.Infrastructure.Services
                 throw new Exception("User not found");
             }
 
+            if (request.IsDefault)
+            {
+                var addresses = await _userRepository
+                    .GetUserAddressesAsync(userId);
+
+                foreach (var existingAddress in addresses)
+                {
+                    existingAddress.IsDefault = false;
+                }
+            }
+
             var address = new Address
             {
                 UserId = userId,
@@ -93,6 +104,7 @@ namespace ECommerce.Infrastructure.Services
                 City = request.City,
                 State = request.State,
                 Country = request.Country,
+                PostalCode = request.PostalCode,
                 AddressType = request.AddressType,
                 IsDefault = request.IsDefault,
             };
@@ -100,6 +112,30 @@ namespace ECommerce.Infrastructure.Services
             await _userRepository.AddAddressAsync(address);
             await _userRepository.SaveChangesAsync();
             return "Address added successfully";
+        }
+
+        public async Task<string> UpdateAddressAsync(Guid userId, Guid addressId, UpdateAddressRequestDto request)
+        {
+            var address = await _userRepository.GetAddressByIdAsync(userId, addressId);
+
+            if (address == null)
+            {
+                throw new Exception("Address not found");
+            }
+
+            address.FullName = request.FullName;
+            address.PhoneNumber = request.PhoneNumber;
+            address.AddressLine1 = request.AddressLine1;
+            address.AddressLine2 = request.AddressLine2;
+            address.City = request.City;
+            address.State = request.State;
+            address.Country = request.Country;
+            address.PostalCode = request.PostalCode;
+            address.AddressType = request.AddressType;
+            address.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.SaveChangesAsync();
+            return "Address updated successfully";
         }
 
         public async Task<List<AddressResponseDto>> GetUserAddressesAsync(Guid userId)
@@ -142,6 +178,22 @@ namespace ECommerce.Infrastructure.Services
             selectedAddress.IsDefault = true;
             await _userRepository.SaveChangesAsync();
             return "Default address successfully";
+        }
+
+        public async Task<string> DeleteAddressAsync(Guid userId, Guid addressId)
+        {
+            var address = await _userRepository.GetAddressByIdAsync(userId, addressId);
+
+            if (address == null)
+            {
+                throw new Exception("Address not found");
+            }
+
+            _userRepository.DeleteAddressAsync(address);
+
+            await _userRepository.SaveChangesAsync();
+
+            return "Address deleted successfully";
         }
     }
 }

@@ -126,6 +126,12 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 // Register ICartService
 builder.Services.AddScoped<ICartService, CartService>();
 
+// Register IOrderRepository
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+// Register IOrderService
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 // Configure Authentication
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

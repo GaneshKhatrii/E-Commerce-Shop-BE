@@ -36,6 +36,19 @@ namespace ECommerce.API.Middlewares
 
                 await context.Response.WriteAsync(jsonResponse);
             }
+            //catch (Exception ex)
+            //{
+            //    var actualMessage = ex.InnerException?.Message ?? ex.Message;
+
+            //    var response = new ApiResponse<string>
+            //    {
+            //        Success = false,
+            //        StatusCode = 400,
+            //        Message = actualMessage
+            //    };
+
+            //    await context.Response.WriteAsJsonAsync(response);
+            //}
         }
     }
 }

@@ -51,9 +51,14 @@ namespace ECommerce.Infrastructure.Repositories
             return await _context.Addresses.Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public async Task<Address?> GetAddressByIdAsync(Guid addressId)
+        public async Task<Address?> GetAddressByIdAsync(Guid userId, Guid addressId)
         {
-            return await _context.Addresses.FirstOrDefaultAsync(x => x.Id == addressId);
+            return await _context.Addresses.FirstOrDefaultAsync(x => x.UserId == userId && x.Id == addressId);
+        }
+
+        public async void DeleteAddressAsync(Address address)
+        {
+            _context.Addresses.Remove(address);
         }
     }
 }
