@@ -219,5 +219,44 @@ namespace ECommerce.Infrastructure.Services.Orders
                 Data = ordersList
             };
         }
+
+        // Order Status Management Module
+        public async Task<ApiResponse<string>> UpdateOrderStatusAsync(Guid orderId, UpdateOrderStatusRequestDto request)
+        {
+            var order = await _orderRepository.GetOrderByIdForUpdateAsync(orderId);
+
+            if (order == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 404,
+                    Message = "Order not found"
+                };
+            }
+
+            // Validate allowed status transitions
+            var IsValidTransition =
+                (order.Status == OrderStatus.Pending &&
+                (request.Status == OrderStatus.Confirmed || request.Status == OrderStatus.Cancelled))
+
+                ||  
+
+                (order.Status == OrderStatus.Confirmed &&
+                (request.Status == OrderStatus.Shipped || request.Status == OrderStatus.Delivered));
+
+            // Update order status
+            order.Status = request.Status;
+
+            // Save Changes
+            await _orderRepository.SaveChangesAsync();
+
+            return new ApiResponse<string>
+            {
+                Success = false,
+                StatusCode = 200,
+                Message = "Order status changed"
+            };
+        }
     }
 }

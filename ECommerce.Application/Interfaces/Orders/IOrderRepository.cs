@@ -22,6 +22,9 @@ namespace ECommerce.Application.Interfaces.Orders
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<List<Order>> GetOrdersByUserIdAsync(Guid userId);
 
+        // Order Status Management Module
+        Task<Order?> GetOrderByIdForUpdateAsync(Guid orderId);
+
         Task SaveChangesAsync();
     }
 }

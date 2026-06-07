@@ -39,5 +39,14 @@ namespace ECommerce.API.Controllers
             var result = await _orderService.GetUserOrdersAsync(userId);
             return StatusCode(result.StatusCode, result);
         }
+
+        // Order Status Management Module
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("status/{orderId}")]
+        public async Task<IActionResult> UpdateOrderStatus([FromRoute] Guid orderId, [FromBody] UpdateOrderStatusRequestDto request)
+        {
+            var result = await _orderService.UpdateOrderStatusAsync(orderId, request);
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
