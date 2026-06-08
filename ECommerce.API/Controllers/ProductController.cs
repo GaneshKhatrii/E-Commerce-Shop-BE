@@ -67,5 +67,13 @@ namespace ECommerce.API.Controllers
             var result = await _productService.GetBrandsAsync();
             return StatusCode(result.StatusCode, result);
         }
+
+        // Product Search & Filtering Module
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] SearchProductsRequestDto request)
+        {
+            var result = await _productService.SearchProductsAsync(request);
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }

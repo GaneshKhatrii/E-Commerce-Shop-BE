@@ -143,7 +143,7 @@ namespace ECommerce.Infrastructure.Services.Products
                 };
             }
 
-            var productItem =  new ProductResponseDto
+            var productItem = new ProductResponseDto
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -197,6 +197,53 @@ namespace ECommerce.Infrastructure.Services.Products
                 StatusCode = 200,
                 Message = brandsList.Any() ? "Brands retrieved successfully" : "No brands found",
                 Data = brandsList
+            };
+        }
+
+        // Product Search & Filtering Module
+        public async Task<ApiResponse<PagedResult<ProductVariantResponseDto>>> SearchProductsAsync(SearchProductsRequestDto request)
+        {
+            // Convert DTO to repository filter model because Repository should not depend on DTOs.
+            var filter = new ProductSearchFilter
+            {
+                SearchTerm = request.SearchTerm,
+                CategoryId = request.CategoryId,
+                BrandId = request.BrandId,
+                Size = request.Size,
+                Color = request.Color,
+                MinPrice = request.MinPrice,
+                MaxPrice = request.MaxPrice,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+            };
+
+            // Fetch filtered products from repository
+            var (products, totalRecords) = await _productRepository.SearchProductsAsync(filter);
+
+            // Map entities to DTOs
+            var produtsList = products.Select(productVariant => new ProductVariantResponseDto
+            {
+                Id = productVariant.Id,
+                ProductId = productVariant.ProductId,
+                ProductName = productVariant.Product.Name,
+                Size = productVariant.Size,
+                Color = productVariant.Color,
+                Price = productVariant.Price,
+                BrandName = productVariant.Product.Brand.Name,
+                CategoryName = productVariant.Product.ProductCategory.Name,
+                ImageUrl = productVariant.ProductImages.FirstOrDefault(x => x.IsPrimary)?.ImageUrl ?? string.Empty
+            }).ToList();
+
+            return new ApiResponse<PagedResult<ProductVariantResponseDto>>
+            {
+                Success = true,
+                StatusCode = 200,
+                Message = produtsList.Any() ? "Products retrieved successfully" : "No products found",
+                Data = new PagedResult<ProductVariantResponseDto>
+                {
+                    Items = produtsList,
+                    TotalRecords = totalRecords
+                }
             };
         }
     }

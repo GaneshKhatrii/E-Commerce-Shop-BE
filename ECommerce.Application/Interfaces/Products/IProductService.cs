@@ -11,6 +11,9 @@ namespace ECommerce.Application.Interfaces.Products
         Task<ApiResponse<PagedResult<ProductResponseDto>>> GetProductsAsync(int pageNumber, int pageSize); 
         Task<ApiResponse<ProductResponseDto?>> GetProductByIdAsync(Guid productId); 
         Task<ApiResponse<List<ProductCategoryResponseDto>>> GetCategoriesAsync(); 
-        Task<ApiResponse<List<BrandResponseDto>>> GetBrandsAsync(); 
+        Task<ApiResponse<List<BrandResponseDto>>> GetBrandsAsync();
+
+        // Product Search & Filtering Module
+        Task<ApiResponse<PagedResult<ProductVariantResponseDto>>> SearchProductsAsync(SearchProductsRequestDto request);
     }
 }

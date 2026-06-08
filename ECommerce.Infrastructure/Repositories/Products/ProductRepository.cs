@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Interfaces.Products;
+﻿using ECommerce.Application.Common;
+using ECommerce.Application.Interfaces.Products;
 using ECommerce.Domain.Entities.Products;
 using ECommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,72 @@ namespace ECommerce.Infrastructure.Repositories.Products
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        // Product Search & Filtering Module
+        public async Task<(List<ProductVariant>, int totalRecords)> SearchProductsAsync(ProductSearchFilter filter)
+        {
+            var query = _context.ProductVariants
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.Brand)
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.ProductCategory)
+                .Include(x => x.ProductImages)
+                .AsQueryable();
+
+            // Search by Product Name
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var searchTerm = filter.SearchTerm.Trim().ToLower().Replace(" ", "");
+                query = query.Where(x => x.Product.Name.ToLower().Replace(" ", "").Contains(searchTerm));
+            }
+
+            // Filter by Category
+            if (filter.CategoryId.HasValue)
+            {
+                query = query.Where(x => x.Product.ProductCategoryId == filter.CategoryId.Value);
+            }
+
+            // Filter by Brand
+            if (filter.BrandId.HasValue)
+            {
+                query = query.Where(x => x.Product.BrandId == filter.BrandId.Value);
+            }
+
+            // Filter by Size
+            if (!string.IsNullOrWhiteSpace(filter.Size))
+            {
+                query = query.Where(x => x.Size == filter.Size);
+            }
+
+            // Filter by Color
+            if (!string.IsNullOrWhiteSpace(filter.Color))
+            {
+                query = query.Where(x => x.Color == filter.Color);
+            }
+
+            // Filter by Minimum Price
+            if (filter.MinPrice.HasValue)
+            {
+                query = query.Where(x => x.Price >= filter.MinPrice);
+            }
+
+            // Filter by Maximum Price
+            if (filter.MaxPrice.HasValue)
+            {
+                query = query.Where(x => x.Price <= filter.MaxPrice);
+            }
+
+            // Total records before pagination
+            var totalRecords = await query.CountAsync();
+
+            // Pagination
+            var products = await query
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            return (products, totalRecords);
         }
     }
 }
