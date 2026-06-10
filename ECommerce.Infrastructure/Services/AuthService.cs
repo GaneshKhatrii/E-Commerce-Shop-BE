@@ -3,6 +3,7 @@ using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using ECommerce.Domain.Enums;
+using ECommerce.Application.Common;
 
 namespace ECommerce.Infrastructure.Services
 {
@@ -24,19 +25,28 @@ namespace ECommerce.Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task VerifyEmailAsync(string token)
+        public async Task<ApiResponse<string>> VerifyEmailAsync(string token)
         {
-            var user =
-                await _userRepository.GetUserByVerificationTokenAsync(token);
+            var user = await _userRepository.GetUserByVerificationTokenAsync(token);
 
             if (user == null)
             {
-                throw new Exception("Invalid verification token");
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 401,
+                    Message = "Invalid verification token"
+                };
             }
 
             if (user.EmailVerificationTokenExpiry < DateTime.UtcNow)
             {
-                throw new Exception("Verification token expired");
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 401,
+                    Message = "Verification token expired"
+                };
             }
 
             user.IsEmailVerified = true;
@@ -48,16 +58,28 @@ namespace ECommerce.Infrastructure.Services
             user.UpdatedAt = DateTime.UtcNow;
 
             await _userRepository.SaveChangesAsync();
+
+            return new ApiResponse<string>
+            {
+                Success = true,
+                StatusCode = 200,
+                Message = "Email verified successfully"
+            };
         }
 
-        public async Task<string> RegisterAsync(RegisterRequestDto request)
+        public async Task<ApiResponse<string>> RegisterAsync(RegisterRequestDto request)
         {
             // Check if email already exists
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
-                throw new Exception("Email already exists");
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 401,
+                    Message = "Email already exists"
+                };
             }
 
             // Generate verification token
@@ -88,7 +110,12 @@ namespace ECommerce.Infrastructure.Services
             await _userRepository.SaveChangesAsync();
 
             // Verification link
-            var verificationLink = $"{_configuration["AppSettings:BaseUrl"]}/api/auth/verify-email?token={verificationToken}";
+
+            // Through Backend
+            //var verificationLink = $"{_configuration["AppSettings:BaseUrl"]}/api/auth/verify-email?token={verificationToken}";    
+
+            // Through Frontend
+            var verificationLink = $"{_configuration["AppSettings:FrontBaseUrl"]}/verify-email?token={verificationToken}";
 
 
             // Send verification email
@@ -104,42 +131,67 @@ namespace ECommerce.Infrastructure.Services
                 emailBody
             );
 
-            return "Registration successful. Please verify your email.";
+            return new ApiResponse<string>
+            {
+                Success = true,
+                StatusCode = 201,
+                Message = "Registration successful. Please verify your email.",
+            };
         }
 
-        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+        public async Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request)
         {
             // Find user
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
 
             if (user == null)
             {
-                throw new Exception("Invalid email or password");
+                return new ApiResponse<LoginResponseDto>
+                {
+                    Success = false,
+                    StatusCode = 401,
+                    Message = "Invalid email or password",
+                };
             }
-
             // Verify password
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isPasswordValid)
             {
-                throw new Exception("Invalid email or password");
+                return new ApiResponse<LoginResponseDto>
+                {
+                    Success = false,
+                    StatusCode = 401,
+                    Message = "Invalid email or password",
+                };
             }
 
             // Check email verification
             if (!user.IsEmailVerified)
             {
-                throw new Exception("Please verify your email first");
+                return new ApiResponse<LoginResponseDto>
+                {
+                    Success = false,
+                    StatusCode = 403,
+                    Message = "Please verify your email first",
+                };
             }
 
             // Generate JWT token
             var token = _jwtService.GenerateToken(user);
 
-            return new LoginResponseDto
+            return new ApiResponse<LoginResponseDto>
             {
-                Token = token,
-                Email = user.Email,
-                FullName = $"{user.FirstName} {user.LastName}",
-                Role = user.Role.ToString()
+                Success = true,
+                StatusCode = 200,
+                Message = "Login successful",
+                Data = new LoginResponseDto
+                {
+                    Token = token,
+                    Email = user.Email,
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Role = user.Role.ToString()
+                }
             };
         }
     }

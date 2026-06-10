@@ -141,6 +141,19 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 // Register IAdminService
 builder.Services.AddScoped<IAdminService, AdminService>();
 
+// Add CORS
+var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 // Configure Authentication
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -174,6 +187,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Register CORS
+app.UseCors("FrontendPolicy");
 
 // Register ExceptionMiddleware
 app.UseMiddleware<ExceptionMiddleware>();

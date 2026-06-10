@@ -1,11 +1,12 @@
-﻿using ECommerce.Application.DTOs.Auth;
+﻿using ECommerce.Application.Common;
+using ECommerce.Application.DTOs.Auth;
 
 namespace ECommerce.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task VerifyEmailAsync(string token);
-        Task<string> RegisterAsync(RegisterRequestDto request);
-        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+        Task<ApiResponse<string>> VerifyEmailAsync(string token);
+        Task<ApiResponse<string>> RegisterAsync(RegisterRequestDto request);
+        Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request);
     }
 }
