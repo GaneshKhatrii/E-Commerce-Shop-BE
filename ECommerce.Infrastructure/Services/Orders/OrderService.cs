@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Common;
 using ECommerce.Application.DTOs.Orders;
+using ECommerce.Application.Interfaces;
 using ECommerce.Application.Interfaces.Orders;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Entities.Orders;
@@ -11,9 +12,11 @@ namespace ECommerce.Infrastructure.Services.Orders
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
-        public OrderService(IOrderRepository orderRepository)
+        private readonly IUserRepository _userRepository;
+        public OrderService(IOrderRepository orderRepository, IUserRepository userRepository)
         {
             _orderRepository = orderRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ApiResponse<string>> PlaceOrderAsync(Guid userId, PlaceOrderRequestDto request)
@@ -104,6 +107,17 @@ namespace ECommerce.Infrastructure.Services.Orders
                 inventory.AvailableStock -= cartItem.Quantity;
             }
 
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 404,
+                    Message = "User not found"
+                };
+            }
+
             // Create order with all the available fetched data
             var order = new Order
             {
@@ -114,6 +128,7 @@ namespace ECommerce.Infrastructure.Services.Orders
                 // Shipping Snapshot
                 FullName = address.FullName,
                 PhoneNumber = address.PhoneNumber,
+                Email = user.Email,
                 AddressLine1 = address.AddressLine1,
                 AddressLine2 = address.AddressLine2,
                 City = address.City,

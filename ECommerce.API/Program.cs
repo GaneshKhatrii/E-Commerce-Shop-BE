@@ -1,15 +1,18 @@
 using ECommerce.API.Middlewares;
 using ECommerce.API.Validators.ProductImages;
 using ECommerce.Application.Interfaces;
+using ECommerce.Application.Interfaces.Admin;
 using ECommerce.Application.Interfaces.Orders;
 using ECommerce.Application.Interfaces.Products;
 using ECommerce.Application.Interfaces.Storage;
 using ECommerce.Application.Validators.Auth;
 using ECommerce.Infrastructure.Data;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.Admin;
 using ECommerce.Infrastructure.Repositories.Orders;
 using ECommerce.Infrastructure.Repositories.Products;
 using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Services.Admin;
 using ECommerce.Infrastructure.Services.Orders;
 using ECommerce.Infrastructure.Services.Products;
 using ECommerce.Infrastructure.Services.Storage;
@@ -131,6 +134,12 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Register IOrderService
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+// Register IAdminRepository
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
+// Register IAdminService
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Configure Authentication
 builder.Services

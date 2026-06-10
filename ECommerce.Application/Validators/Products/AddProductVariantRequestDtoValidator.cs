@@ -28,12 +28,6 @@ namespace ECommerce.Application.Validators.Products
                 .WithMessage("Price is required")
                 .GreaterThan(0)
                 .WithMessage("Price must be greater than 0");
-
-            RuleFor(x => x.StockQuantity)
-                .NotEmpty()
-                .WithMessage("Stock quantity is required")
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Stock quantity cannot be negative");
         }
     }
 }

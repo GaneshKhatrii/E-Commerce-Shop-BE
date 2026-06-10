@@ -28,6 +28,10 @@ namespace ECommerce.Infrastructure.Configurations.Orders
                 .IsRequired()
                 .HasMaxLength(20);
 
+            builder.Property(x => x.Email)
+                .IsRequired()
+                .HasMaxLength(150);
+
             builder.Property(x => x.AddressLine1)
                 .IsRequired()
                 .HasMaxLength(200);
