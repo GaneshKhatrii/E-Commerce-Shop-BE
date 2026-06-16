@@ -1,6 +1,6 @@
 ﻿using ECommerce.Domain.Enums;
 
-namespace ECommerce.Application.DTOs.Orders
+namespace ECommerce.Application.DTOs.Admin
 {
     public class UpdateOrderStatusRequestDto
     {

@@ -89,5 +89,17 @@ namespace ECommerce.Infrastructure.Repositories.Admin
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == orderId);
         }
+
+        // Order Status Management Module
+        public async Task<Order?> GetOrderByIdForUpdateAsync(Guid orderId)
+        {
+            return await _context.Orders
+                .FirstOrDefaultAsync(x => x.Id == orderId);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

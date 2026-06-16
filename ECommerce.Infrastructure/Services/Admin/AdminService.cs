@@ -4,6 +4,7 @@ using ECommerce.Application.DTOs.Orders;
 using ECommerce.Application.DTOs.Products;
 using ECommerce.Application.DTOs.User;
 using ECommerce.Application.Interfaces.Admin;
+using ECommerce.Domain.Enums;
 
 namespace ECommerce.Infrastructure.Services.Admin
 {
@@ -168,6 +169,45 @@ namespace ECommerce.Infrastructure.Services.Admin
                 StatusCode = 200,
                 Message = "Order details retrieved successfully",
                 Data = orderDetails
+            };
+        }
+
+        // Order Status Management Module
+        public async Task<ApiResponse<string>> UpdateOrderStatusAsync(Guid orderId, UpdateOrderStatusRequestDto request)
+        {
+            var order = await _adminRepository.GetOrderByIdForUpdateAsync(orderId);
+
+            if (order == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    StatusCode = 404,
+                    Message = "Order not found"
+                };
+            }
+
+            // Validate allowed status transitions
+            var IsValidTransition =
+                (order.Status == OrderStatus.Pending &&
+                (request.Status == OrderStatus.Confirmed || request.Status == OrderStatus.Cancelled))
+
+                ||
+
+                (order.Status == OrderStatus.Confirmed &&
+                (request.Status == OrderStatus.Shipped || request.Status == OrderStatus.Delivered));
+
+            // Update order status
+            order.Status = request.Status;
+
+            // Save Changes
+            await _adminRepository.SaveChangesAsync();
+
+            return new ApiResponse<string>
+            {
+                Success = false,
+                StatusCode = 200,
+                Message = "Order status changed"
             };
         }
     }

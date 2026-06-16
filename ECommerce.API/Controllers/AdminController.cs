@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Interfaces.Admin;
+﻿using ECommerce.Application.DTOs.Admin;
+using ECommerce.Application.Interfaces.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,15 @@ namespace ECommerce.API.Controllers
         public async Task<IActionResult> GetOrderDetails([FromRoute] Guid orderId)
         {
             var result = await _adminService.GetOrderDetailsByIdAsync(orderId);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        // Order Status Management Module
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("orders/{orderId}/status")]
+        public async Task<IActionResult> UpdateOrderStatus([FromRoute] Guid orderId, [FromBody] UpdateOrderStatusRequestDto request)
+        {
+            var result = await _adminService.UpdateOrderStatusAsync(orderId, request);
             return StatusCode(result.StatusCode, result);
         }
     }

@@ -2,6 +2,7 @@
 {
     public enum OrderStatus
     {
+        // label = value(Integer)
         Pending = 1,
         Confirmed = 2,
         Shipped = 3,

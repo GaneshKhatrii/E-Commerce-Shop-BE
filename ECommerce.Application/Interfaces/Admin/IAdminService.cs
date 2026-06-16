@@ -20,5 +20,8 @@ namespace ECommerce.Application.Interfaces.Admin
         Task<ApiResponse<PagedResult<AdminOrderListResponseDto>>> GetAllOrdersAsync(int pageNumber, int pageSize);
 
         Task<ApiResponse<AdminOrderDetailsResponseDto?>> GetOrderDetailsByIdAsync(Guid orderId);
+
+        // Order Status Management Module
+        Task<ApiResponse<string>> UpdateOrderStatusAsync(Guid orderId, UpdateOrderStatusRequestDto request);
     }
 }
