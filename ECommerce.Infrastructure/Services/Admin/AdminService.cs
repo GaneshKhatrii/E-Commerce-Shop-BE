@@ -99,7 +99,8 @@ namespace ECommerce.Infrastructure.Services.Admin
                 CustomerEmail = order.Email,
                 PhoneNumber = order.PhoneNumber,
                 TotalAmount = order.TotalAmount,
-                Status = order.Status.ToString(),
+                StatusId = (int)order.Status,
+                StatusName = order.Status.ToString(),
                 CreatedAt = order.CreatedAt,
             }).ToList();
 
@@ -155,6 +156,7 @@ namespace ECommerce.Infrastructure.Services.Admin
                 Country = order.Country,
                 PostalCode = order.PostalCode,
                 TotalAmount = order.TotalAmount,
+                StatusId = (int)order.Status,
                 Status = order.Status.ToString(),
                 CreatedAt = order.CreatedAt,
                 OrderItems = orderItems

@@ -43,7 +43,7 @@ namespace ECommerce.API.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet("orders{orderId}")]
+        [HttpGet("orders/{orderId}")]
         public async Task<IActionResult> GetOrderDetails([FromRoute] Guid orderId)
         {
             var result = await _adminService.GetOrderDetailsByIdAsync(orderId);
