@@ -16,7 +16,9 @@ namespace ECommerce.Application.Interfaces.Admin
         Task<(List<User> users, int totalRecords)> GetAllUsersAsync(int pageNumber, int pageSize);
 
         // Products
-        Task<(List<Product> products, int totalRecords)> GetAllProductsAsync(int pageNumber, int pageSize);
+
+        // COMMENTED THIS METHOD BECAUSE THE SAME METHOD IS ALREADY PRRESENT IN PRODUCT REPOSITORY AND IT IS NOT NECESSARY TO HAVE IT HERE. IF YOU WANT TO USE IT, YOU CAN CALL THE METHOD FROM PRODUCT REPOSITORY INSTEAD OF HAVING IT HERE.
+        //Task<(List<Product> products, int totalRecords)> GetAllProductsAsync(int pageNumber, int pageSize);
 
         // Orders
         Task<(List<Order> orders, int totalRecords)> GetAllOrdersAsync(int pageNumber, int pageSize);
@@ -26,5 +28,13 @@ namespace ECommerce.Application.Interfaces.Admin
         // Order Status Management Module
         Task<Order?> GetOrderByIdForUpdateAsync(Guid orderId);
         Task SaveChangesAsync();
+
+        // Product Module
+
+        // ******> THESE METHODS ARE MOVED FROM PRODUCT MODULE TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCT, CATEGORY AND BRAND
+        Task AddProductCategoryAsync(ProductCategory productCategory); 
+        Task AddBrandAsync(Brand brand); 
+        Task AddProductAsync(Product product);
+        Task<(List<Product> products, int totalRecords)> GetProductsAsync(int pageNumber, int pageSize);
     }
 }

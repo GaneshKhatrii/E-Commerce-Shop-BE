@@ -15,29 +15,17 @@ namespace ECommerce.Infrastructure.Repositories.Products
             _context = context;
         }
 
-        public async Task AddProductCategoryAsync(ProductCategory productCategory)
-        {
-            await _context.ProductCategories.AddAsync(productCategory);
-        }
-
-        public async Task AddBrandAsync(Brand brand)
-        {
-            await _context.Brands.AddAsync(brand);
-        }
-
-        public async Task AddProductAsync(Product product)
-        {
-            await _context.Products.AddAsync(product);
-        }
-
         public async Task<(List<Product> products, int totalRecords)> GetProductsAsync(int pageNumber, int pageSize)
         {
             var query = _context.Products
-                .Include(x => x.ProductCategory)
+                .Where(x => x.IsActive)
                 .Include(x => x.Brand)
-                .AsNoTracking();
+                .Include(x => x.ProductCategory)
+                .AsNoTracking()
+                .OrderByDescending(x => x.CreatedAt);
 
             var totalRecords = await query.CountAsync();
+
             var products = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -53,6 +41,11 @@ namespace ECommerce.Infrastructure.Repositories.Products
                 .Include(x => x.Brand)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == productId);
+        }
+
+        public async Task<Product?> GetProductForUpdateAsync(Guid productId)
+        {
+            return await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
         }
 
         public async Task<List<ProductCategory>> GetCategoriesAsync()
@@ -143,5 +136,21 @@ namespace ECommerce.Infrastructure.Repositories.Products
 
             return (products, totalRecords);
         }
+
+        //**********> BELOW API'S ARE MOVED TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCTS, CATEGORIES AND BRANDS
+        //public async Task AddProductCategoryAsync(ProductCategory productCategory)
+        //{
+        //    await _context.ProductCategories.AddAsync(productCategory);
+        //}
+
+        //public async Task AddBrandAsync(Brand brand)
+        //{
+        //    await _context.Brands.AddAsync(brand);
+        //}
+
+        //public async Task AddProductAsync(Product product)
+        //{
+        //    await _context.Products.AddAsync(product);
+        //}
     }
 }

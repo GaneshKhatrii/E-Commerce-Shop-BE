@@ -5,9 +5,6 @@ namespace ECommerce.Application.Interfaces.Products
 {
     public interface IProductService
     {
-        Task<ApiResponse<Guid>> AddProductCategoryAsync(AddProductCategoryRequestDto request); 
-        Task<ApiResponse<Guid>> AddBrandAsync(AddBrandRequestDto request); 
-        Task<ApiResponse<Guid?>> AddProductAsync(AddProductRequestDto request); 
         Task<ApiResponse<PagedResult<ProductResponseDto>>> GetProductsAsync(int pageNumber, int pageSize); 
         Task<ApiResponse<ProductResponseDto?>> GetProductByIdAsync(Guid productId); 
         Task<ApiResponse<List<ProductCategoryResponseDto>>> GetCategoriesAsync(); 
@@ -15,5 +12,11 @@ namespace ECommerce.Application.Interfaces.Products
 
         // Product Search & Filtering Module
         Task<ApiResponse<PagedResult<ProductVariantResponseDto>>> SearchProductsAsync(SearchProductsRequestDto request);
+
+        //**********> BELOW API'S ARE MOVED TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCTS, CATEGORIES AND BRANDS
+
+        //Task<ApiResponse<Guid>> AddProductCategoryAsync(AddProductCategoryRequestDto request); 
+        //Task<ApiResponse<Guid>> AddBrandAsync(AddBrandRequestDto request); 
+        //Task<ApiResponse<Guid?>> AddProductAsync(AddProductRequestDto request); 
     }
 }

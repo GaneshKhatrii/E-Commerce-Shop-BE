@@ -50,21 +50,25 @@ namespace ECommerce.Infrastructure.Repositories.Admin
             return (users, totalRecords);
         }
 
-        public async Task<(List<Product> products, int totalRecords)> GetAllProductsAsync(int pageNumber, int pageSize)
-        {
-            var totalRecords = await _context.Products.CountAsync();
+        // COMMENTED THIS METHOD BECAUSE THE SAME METHOD IS ALREADY PRRESENT IN PRODUCT REPOSITORY AND IT IS NOT NECESSARY TO HAVE IT HERE. IF YOU WANT TO USE IT, YOU CAN CALL THE METHOD FROM PRODUCT REPOSITORY INSTEAD OF HAVING IT HERE.
 
-            var products = await _context.Products
-                .Include(x => x.Brand)
-                .Include(x => x.ProductCategory)
-                .AsNoTracking()
-                .OrderByDescending(x => x.CreatedAt)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+        //public async Task<(List<Product> products, int totalRecords)> GetAllProductsAsync(int pageNumber, int pageSize)
+        //{
+        //    var query = _context.Products
+        //        .Include(x => x.Brand)
+        //        .Include(x => x.ProductCategory)
+        //        .AsNoTracking()
+        //        .OrderByDescending(x => x.CreatedAt);
 
-            return (products, totalRecords);
-        }
+        //    var totalRecords = await query.CountAsync();
+
+        //    var products = await query
+        //        .Skip((pageNumber - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToListAsync();
+
+        //    return (products, totalRecords);
+        //}
 
         public async Task<(List<Order> orders, int totalRecords)> GetAllOrdersAsync(int pageNumber, int pageSize)
         {
@@ -100,6 +104,42 @@ namespace ECommerce.Infrastructure.Repositories.Admin
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        // Product Module
+
+        // ******> THESE METHODS ARE MOVED FROM PRODUCT MODULE TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCT, CATEGORY AND BRAND
+        public async Task AddProductCategoryAsync(ProductCategory productCategory)
+        {
+            await _context.ProductCategories.AddAsync(productCategory);
+        }
+
+        public async Task AddBrandAsync(Brand brand)
+        {
+            await _context.Brands.AddAsync(brand);
+        }
+
+        public async Task AddProductAsync(Product product)
+        {
+            await _context.Products.AddAsync(product);
+        }
+
+        public async Task<(List<Product> products, int totalRecords)> GetProductsAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Products
+                .Include(x => x.Brand)
+                .Include(x => x.ProductCategory)
+                .AsNoTracking()
+                .OrderByDescending(x => x.CreatedAt);
+
+            var totalRecords = await query.CountAsync();
+
+            var products = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (products, totalRecords);
         }
     }
 }

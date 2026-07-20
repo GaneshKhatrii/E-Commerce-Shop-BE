@@ -1,7 +1,6 @@
 ﻿using ECommerce.Application.Common;
 using ECommerce.Application.DTOs.Products;
 using ECommerce.Application.Interfaces.Products;
-using ECommerce.Domain.Entities.Products;
 
 namespace ECommerce.Infrastructure.Services.Products
 {
@@ -11,92 +10,6 @@ namespace ECommerce.Infrastructure.Services.Products
         public ProductService(IProductRepository repository)
         {
             _productRepository = repository;
-        }
-
-        public async Task<ApiResponse<Guid>> AddProductCategoryAsync(AddProductCategoryRequestDto request)
-        {
-            var productCategory = new ProductCategory()
-            {
-                Name = request.Name
-            };
-
-            await _productRepository.AddProductCategoryAsync(productCategory);
-            await _productRepository.SaveChangesAsync();
-
-            return new ApiResponse<Guid>
-            {
-                Success = true,
-                StatusCode = 201,
-                Message = "Product category added successfully",
-                Data = productCategory.Id
-            };
-        }
-
-        public async Task<ApiResponse<Guid>> AddBrandAsync(AddBrandRequestDto request)
-        {
-            var brand = new Brand()
-            {
-                Name = request.Name
-            };
-
-            await _productRepository.AddBrandAsync(brand);
-            await _productRepository.SaveChangesAsync();
-
-            return new ApiResponse<Guid>
-            {
-                Success = true,
-                StatusCode = 201,
-                Message = "Brand added successfully",
-                Data = brand.Id
-            };
-        }
-
-        public async Task<ApiResponse<Guid?>> AddProductAsync(AddProductRequestDto request)
-        {
-            // Check Category
-            var productCategory = await _productRepository.GetProductCategoryByIdAsync(request.ProductCategoryId);
-            if (productCategory == null)
-            {
-                return new ApiResponse<Guid?>
-                {
-                    Success = false,
-                    StatusCode = 404,
-                    Message = "Product category not found",
-                    Data = null
-                };
-            }
-
-            // Check Brand
-            var brand = await _productRepository.GetBrandByIdAsync(request.BrandId);
-            if (brand == null)
-            {
-                return new ApiResponse<Guid?>
-                {
-                    Success = false,
-                    StatusCode = 404,
-                    Message = "Brand not found",
-                    Data = null
-                };
-            }
-
-            var product = new Product()
-            {
-                Name = request.Name,
-                Description = request.Description,
-                ProductCategoryId = request.ProductCategoryId,
-                BrandId = request.BrandId
-            };
-
-            await _productRepository.AddProductAsync(product);
-            await _productRepository.SaveChangesAsync();
-
-            return new ApiResponse<Guid?>
-            {
-                Success = true,
-                StatusCode = 201,
-                Message = "Product added successfully",
-                Data = product.Id
-            };
         }
 
         public async Task<ApiResponse<PagedResult<ProductResponseDto>>> GetProductsAsync(int pageNumber, int pageSize)
@@ -246,5 +159,93 @@ namespace ECommerce.Infrastructure.Services.Products
                 }
             };
         }
+
+        //**********> BELOW API'S ARE MOVED TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCTS, CATEGORIES AND BRANDS
+
+        //public async Task<ApiResponse<Guid>> AddProductCategoryAsync(AddProductCategoryRequestDto request)
+        //{
+        //    var productCategory = new ProductCategory()
+        //    {
+        //        Name = request.Name
+        //    };
+
+        //    await _productRepository.AddProductCategoryAsync(productCategory);
+        //    await _productRepository.SaveChangesAsync();
+
+        //    return new ApiResponse<Guid>
+        //    {
+        //        Success = true,
+        //        StatusCode = 201,
+        //        Message = "Product category added successfully",
+        //        Data = productCategory.Id
+        //    };
+        //}
+
+        //public async Task<ApiResponse<Guid>> AddBrandAsync(AddBrandRequestDto request)
+        //{
+        //    var brand = new Brand()
+        //    {
+        //        Name = request.Name
+        //    };
+
+        //    await _productRepository.AddBrandAsync(brand);
+        //    await _productRepository.SaveChangesAsync();
+
+        //    return new ApiResponse<Guid>
+        //    {
+        //        Success = true,
+        //        StatusCode = 201,
+        //        Message = "Brand added successfully",
+        //        Data = brand.Id
+        //    };
+        //}
+
+        //public async Task<ApiResponse<Guid?>> AddProductAsync(AddProductRequestDto request)
+        //{
+        //    // Check Category
+        //    var productCategory = await _productRepository.GetProductCategoryByIdAsync(request.ProductCategoryId);
+        //    if (productCategory == null)
+        //    {
+        //        return new ApiResponse<Guid?>
+        //        {
+        //            Success = false,
+        //            StatusCode = 404,
+        //            Message = "Product category not found",
+        //            Data = null
+        //        };
+        //    }
+
+        //    // Check Brand
+        //    var brand = await _productRepository.GetBrandByIdAsync(request.BrandId);
+        //    if (brand == null)
+        //    {
+        //        return new ApiResponse<Guid?>
+        //        {
+        //            Success = false,
+        //            StatusCode = 404,
+        //            Message = "Brand not found",
+        //            Data = null
+        //        };
+        //    }
+
+        //    var product = new Product()
+        //    {
+        //        Name = request.Name,
+        //        Description = request.Description,
+        //        ProductCategoryId = request.ProductCategoryId,
+        //        BrandId = request.BrandId
+        //    };
+
+        //    await _productRepository.AddProductAsync(product);
+        //    await _productRepository.SaveChangesAsync();
+
+        //    return new ApiResponse<Guid?>
+        //    {
+        //        Success = true,
+        //        StatusCode = 201,
+        //        Message = "Product added successfully",
+        //        Data = product.Id
+        //    };
+        //}
     }
 }

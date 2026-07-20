@@ -1,7 +1,5 @@
-﻿using ECommerce.Application.Common;
-using ECommerce.Application.DTOs.Products;
+﻿using ECommerce.Application.DTOs.Products;
 using ECommerce.Application.Interfaces.Products;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
@@ -14,30 +12,6 @@ namespace ECommerce.API.Controllers
         public ProductController(IProductService productService)
         {
             _productService = productService;
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost("add-product-category")]
-        public async Task<IActionResult> AddProductCategory(AddProductCategoryRequestDto request)
-        {
-            var result = await _productService.AddProductCategoryAsync(request);
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost("add-brand")]
-        public async Task<IActionResult> AddBrand(AddBrandRequestDto request)
-        {
-            var result = await _productService.AddBrandAsync(request);
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost("add-product")]
-        public async Task<IActionResult> AddProduct(AddProductRequestDto request)
-        {
-            var result = await _productService.AddProductAsync(request);
-            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("get-products")]
@@ -75,5 +49,31 @@ namespace ECommerce.API.Controllers
             var result = await _productService.SearchProductsAsync(request);
             return StatusCode(result.StatusCode, result);
         }
+
+        //**********> BELOW API'S ARE MOVED TO ADMIN MODULE BECAUSE ONLY ADMIN CAN ADD PRODUCTS, CATEGORIES AND BRANDS
+
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost("add-product-category")]
+        //public async Task<IActionResult> AddProductCategory(AddProductCategoryRequestDto request)
+        //{
+        //    var result = await _productService.AddProductCategoryAsync(request);
+        //    return StatusCode(result.StatusCode, result);
+        //}
+
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost("add-brand")]
+        //public async Task<IActionResult> AddBrand(AddBrandRequestDto request)
+        //{
+        //    var result = await _productService.AddBrandAsync(request);
+        //    return StatusCode(result.StatusCode, result);
+        //}
+
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost("add-product")]
+        //public async Task<IActionResult> AddProduct(AddProductRequestDto request)
+        //{
+        //    var result = await _productService.AddProductAsync(request);
+        //    return StatusCode(result.StatusCode, result);
+        //}
     }
 }
